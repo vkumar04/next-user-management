@@ -7,10 +7,10 @@ export async function POST(request: Request) {
     const { email, password, role } = await request.json();
     const hashedPassword = await hash(password, 10);
     const response = await sql`
-      INSERT INTO users (email, password, role)
-      VALUES (${email}, ${hashedPassword}, ${role})`;
+            INSERT INTO users (email, password, role)
+            VALUES (${email}, ${hashedPassword}, ${role})`;
     return NextResponse.json({ message: response }, { status: 201 });
   } catch (e) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
 }
