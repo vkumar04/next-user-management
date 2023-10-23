@@ -26,14 +26,17 @@ export const authOptions: AuthOptions = {
     Credentials({
       name: "Credentials",
       credentials: {
-        username: {},
-        password: {},
+        email: { type: "text", label: "Email" },
+        password: { type: "password", label: "Password" },
       },
       async authorize(credentials) {
         const res =
           await sql`SELECT * FROM users WHERE email = ${credentials?.email}`;
         const user = res.rows[0];
-        const isValid = await compare(credentials.password, user?.password);
+        const isValid = await compare(
+          credentials?.password ?? "",
+          user?.password
+        );
         if (user && isValid) {
           return {
             id: user.id,
