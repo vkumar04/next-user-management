@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 
 export default function RegisterForm() {
@@ -13,10 +14,18 @@ export default function RegisterForm() {
     };
     const response = await fetch("/api/auth/register", requestOptions);
     const json = await response.json();
-    console.log(json);
+    if (json?.error) {
+      console.error(json?.error);
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <input
+        className="input input-bordered input-primary w-full max-w-xs"
+        type="text"
+        placeholder="Name"
+        {...register("name", { required: true })}
+      />
       <input
         className="input input-bordered input-primary w-full max-w-xs"
         type="text"
@@ -42,6 +51,9 @@ export default function RegisterForm() {
         <option value="grower">Grower</option>
       </select>
       <input className="btn btn-primary w-full max-w-xs" type="submit" />
+      <Link className="btn btn-link w-full max-w-xs" href="/login">
+        Login
+      </Link>
     </form>
   );
 }

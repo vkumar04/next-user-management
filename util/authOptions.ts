@@ -28,6 +28,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { type: "text", label: "Email" },
         password: { type: "password", label: "Password" },
+        name: { type: "text", label: "Name" },
       },
       async authorize(credentials) {
         const res =
@@ -38,16 +39,9 @@ export const authOptions: AuthOptions = {
           user?.password
         );
         if (user && isValid) {
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            role: user.role,
-          };
-        } else {
-          return null;
+          return user;
         }
+        return null;
       },
     }),
   ],
