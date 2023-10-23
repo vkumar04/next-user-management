@@ -1,12 +1,18 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
-import { userProfileInterface } from "@/types/user";
+import { signIn } from "next-auth/react";
+import { useForm } from "react-hook-form";
 
 export default function Register() {
-  const { register, handleSubmit, watch } = useForm();
-  const onSubmit: SubmitHandler<userProfileInterface> = (data: object) =>
-    console.log(data);
+  const { register, handleSubmit } = useForm();
+  const onSubmit = async (data: object) => {
+    const res = await signIn("credentials", {
+      email: data?.email,
+      password: data?.password,
+      redirect: false,
+    });
+    console.log({ res });
+  };
 
   return (
     <div className="mx-auto max-w-md p-4 mt-10">

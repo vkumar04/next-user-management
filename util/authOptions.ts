@@ -2,8 +2,13 @@ import GoogleProvider from "next-auth/providers/google";
 import { GoogleProfile } from "next-auth/providers/google";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { compare } from "bcrypt";
+import { sql } from "@vercel/postgres";
 
 export const authOptions: AuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     GoogleProvider({
       profile(profile: GoogleProfile) {
@@ -12,6 +17,7 @@ export const authOptions: AuthOptions = {
           name: profile.name,
           email: profile.email,
           image: profile.picture,
+          role: profile.role ?? "farmer",
         };
       },
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -24,9 +30,18 @@ export const authOptions: AuthOptions = {
         password: {},
       },
       async authorize(credentials) {
-        const user = { id: 1, name: "J Smith", email: "" };
-        if (user) {
-          return user;
+        const res =
+          await sql`SELECT * FROM users WHERE email = ${credentials?.email}`;
+        const user = res.rows[0];
+        const isValid = await compare(credentials.password, user?.password);
+        if (user && isValid) {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          };
         } else {
           return null;
         }
