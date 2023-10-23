@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const response = await sql`
       INSERT INTO users (email, password, role)
       VALUES (${email}, ${hashedPassword}, ${role})`;
-    return NextResponse.json({ message: "success" });
+    return NextResponse.json({ message: response }, { status: 201 });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
