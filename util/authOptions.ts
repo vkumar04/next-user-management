@@ -17,6 +17,23 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     }),
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        username: {},
+        password: {},
+      },
+      async authorize(credentials) {
+        const user = { id: 1, name: "J Smith", email: "" };
+        if (user) {
+          return user;
+        } else {
+          return null;
+        }
+      },
+    }),
   ],
-  secret: process.env.NEXTAUTH_SECRET ?? "",
+  pages: {
+    signIn: "/login",
+  },
 };
