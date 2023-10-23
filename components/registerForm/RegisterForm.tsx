@@ -16,35 +16,32 @@ export default function RegisterForm() {
     console.log(json);
   };
   return (
-    <div className="mx-auto max-w-md p-4 mt-10">
-      <h1 className="text-2xl font-bold mb-10">Register User</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-        <input
-          className="input input-bordered input-primary w-full max-w-xs"
-          type="text"
-          placeholder="Email"
-          {...register("email", { required: true })}
-        />
-        <input
-          className="input input-bordered input-primary w-full max-w-xs"
-          type="password"
-          placeholder="Password"
-          {...register("password", { required: true })}
-        />
-        <select
-          className="select select-primary w-full max-w-xs"
-          {...register("role", { required: true })}
-          defaultValue={"role"}
-        >
-          <option disabled value="role">
-            Role
-          </option>
-          <option value="farmer">Farmer</option>
-          <option value="headGrower">Head Grower</option>
-          <option value="grower">Grower</option>
-        </select>
-        <input className="btn btn-primary w-full max-w-xs" type="submit" />
-      </form>
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+      <input
+        className="input input-bordered input-primary w-full max-w-xs"
+        type="text"
+        placeholder="Email"
+        {...register("email", { required: true })}
+      />
+      <input
+        className="input input-bordered input-primary w-full max-w-xs"
+        type="password"
+        placeholder="Password"
+        {...register("password", { required: true })}
+      />
+      <select
+        className="select select-primary w-full max-w-xs"
+        {...register("role", { required: true })}
+        defaultValue={"role"}
+      >
+        <option disabled value="role">
+          Role
+        </option>
+        <option value="farmer">Farmer</option>
+        <option value="headGrower">Head Grower</option>
+        <option value="grower">Grower</option>
+      </select>
+      <input className="btn btn-primary w-full max-w-xs" type="submit" />
+    </form>
   );
 }

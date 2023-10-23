@@ -1,9 +1,12 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 export default function LoginForm() {
+  const router = useRouter();
   const { register, handleSubmit } = useForm();
   const onSubmit = async (data: { email?: string; password?: string }) => {
     const res = await signIn("credentials", {
@@ -11,7 +14,10 @@ export default function LoginForm() {
       password: data?.password,
       redirect: false,
     });
-    console.log({ res });
+    if (!res?.error) {
+      router.push("/");
+      router.refresh();
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
@@ -28,6 +34,9 @@ export default function LoginForm() {
         {...register("password", { required: true })}
       />
       <button className="btn btn-primary w-full max-w-xs">Login</button>
+      <Link className="btn btn-link w-full max-w-xs" href="/register">
+        Register
+      </Link>
     </form>
   );
 }
