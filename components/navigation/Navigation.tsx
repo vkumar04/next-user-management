@@ -14,7 +14,7 @@ export default function Navigation() {
             <li>
               <Link href="/">Home</Link>
             </li>
-            {session && (
+            {session && session.user.role === "Owner" && (
               <li>
                 <Link href="/admin">Admin</Link>
               </li>
