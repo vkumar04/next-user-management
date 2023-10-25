@@ -27,13 +27,13 @@ export default function LoginForm() {
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         <input
-          className="input input-bordered input-primary w-full max-w-xs"
+          className="input input-bordered w-full max-w-xs"
           type="text"
           placeholder="Email"
           {...register("email", { required: true })}
         />
         <input
-          className="input input-bordered input-primary w-full max-w-xs"
+          className="input input-bordered w-full max-w-xs"
           type="password"
           placeholder="Password"
           {...register("password", { required: true })}
