@@ -1,5 +1,3 @@
-import GoogleProvider from "next-auth/providers/google";
-import { GoogleProfile } from "next-auth/providers/google";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
@@ -10,27 +8,18 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   providers: [
-    GoogleProvider({
-      profile(profile: GoogleProfile) {
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          role: profile.role ?? "farmer",
-        };
-      },
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    }),
     Credentials({
       name: "Credentials",
       credentials: {
         email: { type: "text", label: "Email" },
         password: { type: "password", label: "Password" },
-        name: { type: "text", label: "Name" },
       },
-      async authorize(credentials) {
+      async authorize(
+        credentials: Record<"email" | "password", string> | undefined
+      ) {
+        if (!credentials) {
+          return null;
+        }
         const res =
           await sql`SELECT * FROM users WHERE email = ${credentials?.email}`;
         const user = res.rows[0];
@@ -52,7 +41,31 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user, session, trigger }: any) {
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+      if (user) {
+        return { ...token, id: user.id, role: user?.role };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          name: token.name,
+        },
+      };
+    },
+  },
   pages: {
     signIn: "/login",
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };

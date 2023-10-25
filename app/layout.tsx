@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/navigation/Navigation";
 import { getServerSession } from "next-auth";
+import SessionProvider from "@/context/SessionProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,10 +18,12 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
   return (
-    <html lang="en">
+    <html lang="en" data-theme="corporate">
       <body className={inter.className}>
-        {session && <Navigation />}
-        {children}
+        <SessionProvider session={session}>
+          <Navigation />
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

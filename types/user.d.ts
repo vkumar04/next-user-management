@@ -1,15 +1,14 @@
 enum Role {
-  admin = "admin",
+  owner = "owner",
   farmer = "farmer",
   headGrower = "headGrower",
   grower = "grower",
 }
 
-export interface userProfileInterface {
+export interface User {
+  id: string;
+  name: string;
   email: string;
-  password: string;
-  role: Role;
-  //   firstName?: string;
-  //   lastName?: string;
-  //   phone?: string;
+  image: string | undefined;
+  role?: Role;
 }
