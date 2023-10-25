@@ -43,7 +43,7 @@ export const authOptions: AuthOptions = {
           user?.password
         );
         if (user && isValid) {
-          return NextResponse.json(user);
+          return user;
         } else {
           return null;
         }
