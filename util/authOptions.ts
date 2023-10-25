@@ -4,36 +4,24 @@ import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { sql } from "@vercel/postgres";
-import { NextResponse } from "next/server";
+import { User } from "@/types/user";
 
 export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
   },
   providers: [
-    GoogleProvider({
-      profile(profile: GoogleProfile) {
-        return {
-          id: profile.id,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-          role: profile.role ?? "farmer",
-        };
-      },
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-    }),
     Credentials({
       name: "Credentials",
       credentials: {
         email: { type: "text", label: "Email" },
         password: { type: "password", label: "Password" },
-        name: { type: "text", label: "Name" },
       },
-      async authorize(credentials) {
+      async authorize(
+        credentials: Record<"email" | "password", string> | undefined
+      ): Promise<User | null> {
         if (!credentials) {
-          return new NextResponse("Missing Credentials", { status: 400 });
+          return null;
         }
         const res =
           await sql`SELECT * FROM users WHERE email = ${credentials?.email}`;
@@ -43,14 +31,44 @@ export const authOptions: AuthOptions = {
           user?.password
         );
         if (user && isValid) {
-          return user;
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          };
         } else {
           return null;
         }
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user, session, trigger }) {
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+      if (user) {
+        return { ...token, id: user.id, role: user?.role };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          name: token.name,
+        },
+      };
+    },
+  },
   pages: {
     signIn: "/login",
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };

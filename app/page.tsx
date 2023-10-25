@@ -1,12 +1,14 @@
-import { getServerSession } from "next-auth";
-import { redirect } from "next/dist/server/api-utils";
+"use client";
 
-export default async function Home() {
-  const session = await getServerSession();
-  console.log(session);
+import { useSession } from "next-auth/react";
+
+export default function Home() {
+  const session = useSession();
+  const { data: sessionData } = session;
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {session?.user?.name}
+      {sessionData?.user?.name}
+      {sessionData?.user?.role}
     </main>
   );
 }

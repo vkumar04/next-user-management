@@ -50,7 +50,7 @@ export default function RegisterForm() {
           <option disabled value="role">
             Role
           </option>
-          <option value="farmer">Farmer</option>
+          <option value="Owner">Owner</option>
           <option value="headGrower">Head Grower</option>
           <option value="grower">Grower</option>
         </select>
