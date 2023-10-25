@@ -14,7 +14,11 @@ export default function Navigation() {
             <li>
               <Link href="/">Home</Link>
             </li>
-            <li>{session && <Link href="/admin">Admin</Link>}</li>
+            <li>
+              {session?.user.role === "Owner" && (
+                <Link href="/admin">Admin</Link>
+              )}
+            </li>
           </ul>
         </div>
       </div>
