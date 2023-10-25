@@ -4,6 +4,7 @@ import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { sql } from "@vercel/postgres";
+import { NextResponse } from "next/server";
 
 export const authOptions: AuthOptions = {
   session: {
@@ -31,6 +32,9 @@ export const authOptions: AuthOptions = {
         name: { type: "text", label: "Name" },
       },
       async authorize(credentials) {
+        if (!credentials) {
+          return new NextResponse("Missing Credentials", { status: 400 });
+        }
         const res =
           await sql`SELECT * FROM users WHERE email = ${credentials?.email}`;
         const user = res.rows[0];
@@ -39,13 +43,7 @@ export const authOptions: AuthOptions = {
           user?.password
         );
         if (user && isValid) {
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            role: user.role,
-          };
+          return NextResponse.json(user);
         } else {
           return null;
         }
