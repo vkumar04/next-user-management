@@ -20,7 +20,7 @@ export default function LoginForm() {
       router.push("/");
       router.refresh();
     } else {
-      setError(res?.error);
+      setError("user does not exist");
     }
   };
   return (
