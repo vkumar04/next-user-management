@@ -14,11 +14,11 @@ export default function Navigation() {
             <li>
               <Link href="/">Home</Link>
             </li>
-            <li>
-              {session?.user.role === "Owner" && (
+            {session?.user.role === "Owner" && (
+              <li>
                 <Link href="/admin">Admin</Link>
-              )}
-            </li>
+              </li>
+            )}
           </ul>
         </div>
       </div>
