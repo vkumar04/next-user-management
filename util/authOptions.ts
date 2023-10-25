@@ -1,10 +1,7 @@
-import GoogleProvider from "next-auth/providers/google";
-import { GoogleProfile } from "next-auth/providers/google";
 import { AuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { sql } from "@vercel/postgres";
-import { User } from "@/types/user";
 
 export const authOptions: AuthOptions = {
   session: {
@@ -19,7 +16,7 @@ export const authOptions: AuthOptions = {
       },
       async authorize(
         credentials: Record<"email" | "password", string> | undefined
-      ): Promise<User | null> {
+      ) {
         if (!credentials) {
           return null;
         }
@@ -45,7 +42,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, session, trigger }) {
+    async jwt({ token, user, session, trigger }: any) {
       if (trigger === "update" && session?.name) {
         token.name = session.name;
       }
